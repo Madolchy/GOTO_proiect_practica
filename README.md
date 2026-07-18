@@ -2,7 +2,7 @@
 
 # Introduction
 This project is made for me to learn the basics of communication between microservices. Arhitectually it's going to be composed of a frontend and [x] services:
-- (Frontend)[gotoFrontend]: Svelte
+- (Frontend)[services/frontend]: Svelte
 - Trip management service
 - Dispatch service
 -

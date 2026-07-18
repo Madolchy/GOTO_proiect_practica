@@ -23,3 +23,11 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 # Playwright
 test-results
+
+# Per-service dotdirs (build/tool state, not source)
+services/*/.svelte-kit/
+services/*/.opencode/
+services/*/.vscode/
+
+# Local-only reference project (kept on disk, not version controlled)
+gotoFrontendExample/
