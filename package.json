@@ -1,0 +1,13 @@
+{
+  "name": "goto",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Workspace root for the goto monorepo (price, dispatch, frontend).",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test"
+  },
+  "packageManager": "pnpm@11.3.0"
+}

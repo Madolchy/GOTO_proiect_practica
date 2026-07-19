@@ -31,3 +31,4 @@ services/*/.vscode/
 
 # Local-only reference project (kept on disk, not version controlled)
 gotoFrontendExample/
+services/frontend/src/env.ts
