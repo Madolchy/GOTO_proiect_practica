@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package goto.v1;
+
+message LatLng {
+    double lat = 1;
+    double lng = 2;
+}
+
+message SetPositionRequest {
+    uint32 driver_id = 1;
+    LatLng position = 2;
+}
+
+message SetPositionResponse { bool ok = 1; }
+
+message StreamPositionsResponse {
+    bool ok = 1;
+    uint32 received = 2;
+}
+
+service DriverPositionService {
+    rpc SetPosition(SetPositionRequest) returns (SetPositionResponse);
+    rpc StreamPositions(stream LatLng) returns (StreamPositionsResponse);
+}
