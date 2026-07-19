@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { LatLng } from './stores/markers.svelte';
+	import type { LatLng } from './stores/markers.svelte.ts';
 
-	let { latlng }: {latlng: LatLng} = $props();
+	let { latlng }: { latlng: LatLng } = $props();
 </script>
 
 <li>
-	{latlng[0].toFixed(4)}, {latlng[1].toFixed(4)}
+	{latlng.lat.toFixed(4)}, {latlng.lng.toFixed(4)}
 </li>

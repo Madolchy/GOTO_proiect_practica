@@ -9,7 +9,7 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <QueryClientProvider client={queryClient}>
-    <main>
-        {@render children()}
-    </main>
+	<main>
+		{@render children()}
+	</main>
 </QueryClientProvider>

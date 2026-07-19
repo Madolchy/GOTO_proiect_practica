@@ -1,5 +1,7 @@
 ## Project Configuration
 
+This is part of a monorepo found at ..
+
 - **Language**: TypeScript
 - **Package Manager**: pnpm
 - **Add-ons**: prettier, eslint, vitest, playwright, tailwindcss, sveltekit-adapter, mdsvex, mcp, experimental

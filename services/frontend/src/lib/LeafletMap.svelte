@@ -5,7 +5,7 @@
 	import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 	import markerIcon from 'leaflet/dist/images/marker-icon.png';
 	import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-	import type { LatLng } from './stores/markers.svelte';
+	import type { LatLng } from './stores/markers.svelte.ts';
 
 	type Props = {
 		center?: LatLng;
@@ -16,7 +16,7 @@
 	};
 
 	let {
-		center = [51.505, -0.09],
+		center = { lat: 51.505, lng: -0.09 },
 		zoom = 13,
 		markers = [],
 		onMapClick,
@@ -45,7 +45,7 @@
 		}).addTo(map);
 
 		map.on('click', (e: L.LeafletMouseEvent) => {
-			onMapClick?.([e.latlng.lat, e.latlng.lng]);
+			onMapClick?.({ lat: e.latlng.lat, lng: e.latlng.lng });
 		});
 
 		return () => {
@@ -65,7 +65,7 @@
 	});
 
 	$effect(() => {
-		if (!map) return
+		if (!map) return;
 		map.setView(center, zoom);
 	});
 </script>

@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import LeafletMap from '$lib/LeafletMap.svelte';
-	import { getMarkers, addMarker, clearMarkers } from '$lib/stores/markers.svelte';
+	import { getMarkers, addMarker } from '$lib/stores/markers.svelte';
 	import MarkerModal from '$lib/MarkerModal.svelte';
 
 	// Shown immediately. Recentered to the visitor's real position once
 	// the browser geolocation API resolves (requires user permission).
-	let center = $state<[number, number]>([44.4268, 26.1025]);
+	let center = $state<{ lat: number; lng: number }>({ lat: 44.4268, lng: 26.1025 });
 
 	onMount(() => {
 		if (!navigator.geolocation) return;
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-				center = [position.coords.latitude, position.coords.longitude];
+				center = { lat: position.coords.latitude, lng: position.coords.longitude };
 			},
 			(err) => {
 				console.warn('[geolocation] failed, keeping default:', err.message);
@@ -22,8 +22,6 @@
 		);
 	});
 
-	// Reactive reference to the shared marker store. Mutations elsewhere
-	// (clicks on the map, the Clear button, etc.) update this list too.
 	const markers = getMarkers();
 </script>
 
@@ -43,7 +41,7 @@
 		</div>
 
 		<LeafletMarkerContainer class="flex flex-col gap-1">
-			{#each markers as latlng (latlng.join(','))}
+			{#each markers as latlng (`${latlng.lat},${latlng.lng}`)}
 				<LeafletMarker {latlng} />
 			{/each}
 		</LeafletMarkerContainer>
