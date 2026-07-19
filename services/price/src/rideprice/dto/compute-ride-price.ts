@@ -1,19 +1,24 @@
 import {
     IsNotEmpty,
-    IsDecimal,
+    IsNumber,
     ValidateNested,
     IsDefined,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
+
+const toFixed6 = ({ value }: { value: number }) =>
+    Math.round(value * 1_000_000) / 1_000_000;
 
 export class LatLngDto {
+    @Transform(toFixed6)
     @IsNotEmpty()
-    @IsDecimal({ decimal_digits: '2,6', force_decimal: true })
-    lat: string;
+    @IsNumber()
+    lat: number;
 
+    @Transform(toFixed6)
     @IsNotEmpty()
-    @IsDecimal({ decimal_digits: '2,6', force_decimal: true })
-    lng: string;
+    @IsNumber()
+    lng: number;
 }
 
 export class ComputeRidePriceDto {

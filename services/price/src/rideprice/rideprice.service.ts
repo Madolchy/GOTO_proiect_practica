@@ -10,6 +10,7 @@ export class RidePriceService {
         const distance = getDistance(startlatlng, endlatlng); // meters
         const price = Intl.NumberFormat('ro-RO', {
             maximumFractionDigits: 2,
+            minimumFractionDigits: 2,
         }).format(distance * this.ronPriceMeter);
 
         return price;
