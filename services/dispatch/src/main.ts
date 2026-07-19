@@ -1,14 +1,20 @@
 import { NestFactory } from '@nestjs/core';
+import type { Express } from 'express';
 import { AppModule } from './app.module';
+import { ConnectMiddleware } from './connect/connect.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
 
-  // ConnectRPC adapter will be mounted here once services are defined, e.g.:
-  //   import { connectNodeAdapter } from '@connectrpc/connect-node';
-  //   app.use('/api', connectNodeAdapter({ routes: (router) => { ... } }));
+    app.enableCors();
 
-  await app.listen(process.env.PORT ?? 3000);
+    const expressApp = app.getHttpAdapter().getInstance() as Express;
+    const connectMiddleware = app.get(ConnectMiddleware);
+    expressApp.use(connectMiddleware.use.bind(connectMiddleware));
+
+    await app.listen(process.env.PORT ?? 3020);
+
+    console.log('Listening on: ', process.env.PORT ?? 3020);
 }
 
 void bootstrap();
