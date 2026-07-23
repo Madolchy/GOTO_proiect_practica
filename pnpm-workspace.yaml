@@ -5,4 +5,5 @@ allowBuilds:
   '@bufbuild/buf': true
   "@tailwindcss/oxide": true
   esbuild: true
+  protobufjs: true
   unrs-resolver: true

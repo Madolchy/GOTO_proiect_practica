@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package goto.v1;
+
+import "common.proto";
+
+message GetPriceRequest {
+    LatLng origin = 1;
+    LatLng destination = 2;
+}
+
+message GetPriceResponse {
+    double price = 1;
+    string currency = 2;
+}
+
+service PriceService {
+    rpc GetPrice(GetPriceRequest) returns (GetPriceResponse);
+}

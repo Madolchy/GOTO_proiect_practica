@@ -4,9 +4,13 @@ plugins:
     out: ../services/frontendDriver/src/gen
     opt:
       - target=ts
+    include_imports: true
   - local: protoc-gen-es
     out: ../services/dispatch/src/gen
     opt:
         - target=ts
+    include_imports: true
 inputs:
   - directory: .
+    paths:
+      - driver_location.proto
