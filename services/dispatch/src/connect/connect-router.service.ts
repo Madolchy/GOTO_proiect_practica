@@ -12,9 +12,7 @@ import { DriverPositionsService } from '../driver-positions/driver-positions.ser
  */
 @Injectable()
 export class ConnectRouterService {
-    constructor(
-        private readonly driverPositionsService: DriverPositionsService,
-    ) {}
+    constructor(private readonly driverPositionsService: DriverPositionsService) {}
 
     register(router: ConnectRouter): void {
         router.service(DriverPositionService, this.driverPositionsService);

@@ -1,28 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { LatLng, SetPositionRequest } from '../gen/driver_location_pb';
+import { ConnectError, Code } from '@connectrpc/connect';
+import type { LatLng } from '../gen/common_pb';
+import type { SetPositionRequest } from '../gen/driver_location_pb';
 
 @Injectable()
 export class DriverPositionsService {
     private readonly logger = new Logger(DriverPositionsService.name);
+    private readonly positions = new Map<number, LatLng>();
 
+    getPositions() {
+        return this.positions;
+    }
     setPosition(req: SetPositionRequest): { ok: boolean } {
-        this.logger.log(
-            `setPosition: driverId=${req.driverId} lat=${req.position?.lat}, lng=${req.position?.lng}`,
-        );
-        // TODO: persist the driver position.
+        if (!req.driverId) throw new ConnectError('driver_id is required', Code.InvalidArgument);
+        if (!req.position) throw new ConnectError('position is required', Code.InvalidArgument);
+
+        this.logger.log(`setPosition: driverId=${req.driverId} lat=${req.position?.lat}, lng=${req.position?.lng}`);
+        this.positions.set(req.driverId, req.position);
+
         return { ok: true };
     }
-
-    // async streamPositions(
-    //     requests: AsyncIterable<LatLng>,
-    // ): Promise<{ ok: boolean; received: number }> {
-    //     let received = 0;
-    //     for await (const point of requests) {
-    //         received++;
-    //         this.logger.debug(
-    //             `streamPositions: lat=${point.lat}, lng=${point.lng}`,
-    //         );
-    //     }
-    //     return { ok: true, received };
-    // }
 }

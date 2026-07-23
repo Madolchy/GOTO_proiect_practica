@@ -4,35 +4,15 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { LatLng, LatLngSchema } from "./common_pb";
+import { file_common } from "./common_pb";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file driver_location.proto.
  */
 export const file_driver_location: GenFile = /*@__PURE__*/
-  fileDesc("ChVkcml2ZXJfbG9jYXRpb24ucHJvdG8SB2dvdG8udjEiIgoGTGF0TG5nEgsKA2xhdBgBIAEoARILCgNsbmcYAiABKAEiSgoSU2V0UG9zaXRpb25SZXF1ZXN0EhEKCWRyaXZlcl9pZBgBIAEoDRIhCghwb3NpdGlvbhgCIAEoCzIPLmdvdG8udjEuTGF0TG5nIiEKE1NldFBvc2l0aW9uUmVzcG9uc2USCgoCb2sYASABKAgiNwoXU3RyZWFtUG9zaXRpb25zUmVzcG9uc2USCgoCb2sYASABKAgSEAoIcmVjZWl2ZWQYAiABKA0yqQEKFURyaXZlclBvc2l0aW9uU2VydmljZRJICgtTZXRQb3NpdGlvbhIbLmdvdG8udjEuU2V0UG9zaXRpb25SZXF1ZXN0GhwuZ290by52MS5TZXRQb3NpdGlvblJlc3BvbnNlEkYKD1N0cmVhbVBvc2l0aW9ucxIPLmdvdG8udjEuTGF0TG5nGiAuZ290by52MS5TdHJlYW1Qb3NpdGlvbnNSZXNwb25zZSgBYgZwcm90bzM");
-
-/**
- * @generated from message goto.v1.LatLng
- */
-export type LatLng = Message<"goto.v1.LatLng"> & {
-  /**
-   * @generated from field: double lat = 1;
-   */
-  lat: number;
-
-  /**
-   * @generated from field: double lng = 2;
-   */
-  lng: number;
-};
-
-/**
- * Describes the message goto.v1.LatLng.
- * Use `create(LatLngSchema)` to create a new message.
- */
-export const LatLngSchema: GenMessage<LatLng> = /*@__PURE__*/
-  messageDesc(file_driver_location, 0);
+  fileDesc("ChVkcml2ZXJfbG9jYXRpb24ucHJvdG8SB2dvdG8udjEiSgoSU2V0UG9zaXRpb25SZXF1ZXN0EhEKCWRyaXZlcl9pZBgBIAEoDRIhCghwb3NpdGlvbhgCIAEoCzIPLmdvdG8udjEuTGF0TG5nIiEKE1NldFBvc2l0aW9uUmVzcG9uc2USCgoCb2sYASABKAgiNwoXU3RyZWFtUG9zaXRpb25zUmVzcG9uc2USCgoCb2sYASABKAgSEAoIcmVjZWl2ZWQYAiABKA0yqQEKFURyaXZlclBvc2l0aW9uU2VydmljZRJICgtTZXRQb3NpdGlvbhIbLmdvdG8udjEuU2V0UG9zaXRpb25SZXF1ZXN0GhwuZ290by52MS5TZXRQb3NpdGlvblJlc3BvbnNlEkYKD1N0cmVhbVBvc2l0aW9ucxIPLmdvdG8udjEuTGF0TG5nGiAuZ290by52MS5TdHJlYW1Qb3NpdGlvbnNSZXNwb25zZSgBYgZwcm90bzM", [file_common]);
 
 /**
  * @generated from message goto.v1.SetPositionRequest
@@ -54,7 +34,7 @@ export type SetPositionRequest = Message<"goto.v1.SetPositionRequest"> & {
  * Use `create(SetPositionRequestSchema)` to create a new message.
  */
 export const SetPositionRequestSchema: GenMessage<SetPositionRequest> = /*@__PURE__*/
-  messageDesc(file_driver_location, 1);
+  messageDesc(file_driver_location, 0);
 
 /**
  * @generated from message goto.v1.SetPositionResponse
@@ -71,7 +51,7 @@ export type SetPositionResponse = Message<"goto.v1.SetPositionResponse"> & {
  * Use `create(SetPositionResponseSchema)` to create a new message.
  */
 export const SetPositionResponseSchema: GenMessage<SetPositionResponse> = /*@__PURE__*/
-  messageDesc(file_driver_location, 2);
+  messageDesc(file_driver_location, 1);
 
 /**
  * @generated from message goto.v1.StreamPositionsResponse
@@ -93,7 +73,7 @@ export type StreamPositionsResponse = Message<"goto.v1.StreamPositionsResponse">
  * Use `create(StreamPositionsResponseSchema)` to create a new message.
  */
 export const StreamPositionsResponseSchema: GenMessage<StreamPositionsResponse> = /*@__PURE__*/
-  messageDesc(file_driver_location, 3);
+  messageDesc(file_driver_location, 2);
 
 /**
  * @generated from service goto.v1.DriverPositionService

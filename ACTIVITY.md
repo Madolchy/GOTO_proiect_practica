@@ -33,3 +33,55 @@
     - Creat logica de rpc pentru driver
 - Realizat cu succes comunicare intre frontend si backend
 - Inceput diagrama arhitecturala
+
+# Ziua 5
+- Coordonator:
+    - Initializat serviciu pentru coordonare
+    - Adaugat comunicare prin rpc intre microservici
+- Price
+    - Adaugat comunicare prin rpc intre microservici
+- Frontend:
+    - Toate cererile o sa treaca prin coordonator
+    
+# Ziua 6
+- Revizuit planul de arhitectura, am decis ca inloc de kafka (care e overkill) pentru proiect o sa raman la:
+    - RabbitMQ pentru comunicare asincrona
+    - pg-boss pentru cron jobs
+- Adaugat rabbitmq pentru comunicare async intre backend
+- Decis de a merge pe arhitectura orchestrata in care coordonatorul este 'central brain'
+- Adaugat docker-compose pentru rabbitmq
+- Dispatch
+    - Implementat metoda de comunicare prin rabbitmq
+- Coordonator
+    - Implementat metoda de comuunicare prin rabbitmq
+- Stabilire canale de queue pentru amandoua + testare setare
+
+# Ziua 7
+- Adaugat suport pentru websocket in dispatch
+- Frontend
+    - Adaugat mutate pentru a cere un ride id si pentru a incepe side-effectul de cautare unui ride
+- FrontendDriver
+    - Adaugat logica de websocket pentru comunicarea cu dispatch
+- Dispatch
+    - Adaugat logica de websocket pentru comunicare cu frontendDriver
+- Coordonator
+    - Organizat folderele dupa nume, incat endpointul de dispatch foloseste mai multe protocoale de comunicare
+    - Adaugat comunicare prin SSE
+- Analiza arhitecturala + aflarea limitatilor de streaming prin connect rpc si browsere
+
+# Ziua 8
+- Probleme cu configurare websocket in majoritatea zilei...
+- Frontend
+    - Reparat url broken pentru SSE
+    - Modificat Modal sa arete ce sofer a aceptat cursa
+    - Reparat url pentru websocket, incat socket.io foloseste http nu ws / wss direct si face upgrade dupa.
+- Dispatch
+    - Adaugat comunicarea de raspundere pentru coordonator in caz de cursa aceptata
+    - Reparat un bug in care EventPattern nu era inregistrat daca nu modulul nu are controller + mutat din Service in controller logica de redis si creat functie de serviciu pentru comunicare in sine
+    - Adaugat logica de a gasi cel mai bun sofer pentru oferat (closest to origin)
+- FrontendDriver
+    - Adaugat streaming with websocket catre dispatch
+    - Creat Modal pentru a avertiza cand primeste o oferta cu buton de apceptare / respingere
+- Coordinator
+    - Am decis sa raman la arhitectura de pub/sub de redisp entru a putea avea mai multe instante active.
+    - (Ramane de schimbat din memory map in redis kyv)
