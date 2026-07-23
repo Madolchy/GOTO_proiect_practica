@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import LeafletMap from '$lib/LeafletMap.svelte';
-	import { getActivePosition, updateActivePosition } from '$lib/stores/markers.svelte';
+	import { getActivePosition, getDriverId, updateActivePosition } from '$lib/stores/markers.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { connectDriver, getStatus } from '$lib/stores/driver.svelte';
+	import { socket } from '$lib/stores/socket.svelte';
+	import { DISPATCH_BACKEND_URL } from '$app/env/public';
+	import OfferModal from '$lib/OfferModal.svelte';
 
 	// Shown immediately. Recentered to the visitor's real position once
 	// the browser geolocation API resolves (requires user permission).
 	let center = $state<{ lat: number; lng: number }>({ lat: 44.4268, lng: 26.1025 });
+
+	socket.url = `${DISPATCH_BACKEND_URL}/live-driver`;
+	console.log('Socket url is: ', socket.url);
+	socket.setAuthTokenGetter(() => getDriverId().toString());
 
 	onMount(() => {
 		if (!navigator.geolocation) return;
@@ -62,4 +69,5 @@
 			{/each}
 		</LeafletMarkerContainer>
 	</aside> -->
+	<OfferModal />
 </div>

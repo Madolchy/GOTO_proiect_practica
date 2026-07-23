@@ -3,6 +3,7 @@ import { createConnectTransport } from '@connectrpc/connect-web';
 import { DISPATCH_BACKEND_URL, PRICE_BACKEND_URL } from '$app/env/public';
 import { DriverPositionService } from '../../gen/driver_location_pb';
 import { getActivePosition, getDriverId, updateActivePosition, type LatLng } from './markers.svelte';
+import { socket } from './socket.svelte';
 
 type DriverState = 'disconnected' | 'connecting' | 'connected' | 'error';
 
@@ -80,6 +81,8 @@ export async function connectDriver() {
 		return;
 	}
 
+
+	socket.connect();
 	status = 'connecting';
 	const c = getClient();
 
@@ -91,5 +94,7 @@ export function disconnectDriver() {
 		clearTimeout(pingTimer);
 		pingTimer = null;
 	}
+
+    socket.disconnect();
 	status = 'disconnected';
 }
