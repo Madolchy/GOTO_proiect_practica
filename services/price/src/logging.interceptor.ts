@@ -11,24 +11,32 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-    // We give it a context name ('HTTP') so it displays nicely in the console
-    private readonly logger = new Logger('HTTP');
+    private readonly logger = new Logger('App');
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const ctx = context.switchToHttp();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const request = ctx.getRequest();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const { method, url } = request;
+        const type = context.getType();
         const now = Date.now();
+        const label = this.labelFor(context, type);
 
-        // The next.handle() stream processes the request.
-        // We use .pipe(tap(...)) to run code *after* the controller finishes execution.
         return next.handle().pipe(
             tap(() => {
-                const duration = Date.now() - now;
-                this.logger.log(`${method} ${url} - Finished in ${duration}ms`);
+                this.logger.log(`${label} - Finished in ${Date.now() - now}ms`);
             }),
         );
+    }
+
+    private labelFor(context: ExecutionContext, type: string): string {
+        if (type === 'http') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const request = context.switchToHttp().getRequest();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            return `${request.method} ${request.url}`;
+        }
+        if (type === 'rpc') {
+            const className = context.getClass()?.name ?? 'Unknown';
+            const handlerName = context.getHandler()?.name ?? 'Unknown';
+            return `gRPC ${className}.${handlerName}`;
+        }
+        return `${String(type)} ${context.getHandler()?.name ?? 'Unknown'}`;
     }
 }

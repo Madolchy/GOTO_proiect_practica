@@ -6,13 +6,16 @@ import { Injectable } from '@nestjs/common';
 export class RidePriceService {
     private ronPriceMeter = 0.01;
 
-    computePrice(startlatlng: LatLngDto, endlatlng: LatLngDto) {
+    computePriceRaw(startlatlng: LatLngDto, endlatlng: LatLngDto): number {
         const distance = getDistance(startlatlng, endlatlng); // meters
-        const price = Intl.NumberFormat('ro-RO', {
+        return Math.round(distance * this.ronPriceMeter * 100) / 100;
+    }
+
+    computePrice(startlatlng: LatLngDto, endlatlng: LatLngDto): string {
+        const raw = this.computePriceRaw(startlatlng, endlatlng);
+        return Intl.NumberFormat('ro-RO', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2,
-        }).format(distance * this.ronPriceMeter);
-
-        return price;
+        }).format(raw);
     }
 }
