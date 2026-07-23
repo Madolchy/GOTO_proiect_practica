@@ -25,8 +25,8 @@ export default defineConfig({
 			adapter: adapter(),
 			preprocess: [mdsvex({ extensions: ['.svx', '.md'] })],
 			extensions: ['.svelte', '.svx', '.md'],
-            experimental: { remoteFunctions: true },
-            env: {dir: "../../"}
+			experimental: { remoteFunctions: true },
+			env: { dir: '../../' }
 		})
 	],
 	test: {

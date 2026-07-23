@@ -2,24 +2,18 @@
 	import { onMount } from 'svelte';
 	import LeafletMap from '$lib/LeafletMap.svelte';
 	import { getMarkers, addMarker } from '$lib/stores/markers.svelte';
-	import MarkerModal from '$lib/MarkerModal.svelte';
+	import ConfirmationModal from '$lib/MarkerModal.svelte';
+	import { getGeolocation } from '$lib/utils/location';
 
 	// Shown immediately. Recentered to the visitor's real position once
 	// the browser geolocation API resolves (requires user permission).
 	let center = $state<{ lat: number; lng: number }>({ lat: 44.4268, lng: 26.1025 });
 
-	onMount(() => {
+	onMount(async () => {
 		if (!navigator.geolocation) return;
 
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				center = { lat: position.coords.latitude, lng: position.coords.longitude };
-			},
-			(err) => {
-				console.warn('[geolocation] failed, keeping default:', err.message);
-			},
-			{ enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 }
-		);
+		const coords = await getGeolocation(navigator);
+		if (coords) center = coords;
 	});
 
 	const markers = getMarkers();
@@ -47,5 +41,5 @@
 		</LeafletMarkerContainer>
 	</aside> -->
 
-	<MarkerModal />
+	<ConfirmationModal />
 </div>
