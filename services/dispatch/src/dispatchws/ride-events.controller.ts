@@ -1,29 +1,25 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern, Payload, Transport } from '@nestjs/microservices';
+import { Controller, OnModuleInit } from '@nestjs/common';
 import { DispatchWSGateway } from './dispatchws.gateway';
+import { RedisService } from 'src/redis/redis.service';
 import { LatLng } from 'src/gen/common_pb';
 
 @Controller()
-export class RideEventsController {
-    constructor(private readonly gateway: DispatchWSGateway) {}
+export class RideEventsController implements OnModuleInit {
+    constructor(
+        private readonly gateway: DispatchWSGateway,
+        private readonly redis: RedisService,
+    ) {}
 
-    @EventPattern('ride.offer.created', Transport.REDIS)
-    handleOfferCreated(
-        @Payload()
-        data: {
-            rideId: string;
-            userId: string;
-            driverId: string;
-            clientOrigin: LatLng;
-            clientDestination: LatLng;
-        },
-    ) {
-        console.log('heyo?', data);
-        this.gateway.sendOfferToDriver(
-            data.rideId,
-            data.driverId,
-            data.clientOrigin,
-            data.clientDestination,
-        );
+    async onModuleInit(): Promise<void> {
+        await this.redis.subscriber.subscribe('ride.offer.created', (raw) => {
+            const data = JSON.parse(raw) as {
+                rideId: string;
+                userId: string;
+                driverId: string;
+                clientOrigin: LatLng;
+                clientDestination: LatLng;
+            };
+            this.gateway.sendOfferToDriver(data.rideId, data.driverId, data.clientOrigin, data.clientDestination);
+        });
     }
 }

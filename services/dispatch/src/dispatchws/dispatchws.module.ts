@@ -1,21 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { DispatchWSGateway } from './dispatchws.gateway';
 import { RideEventsController } from './ride-events.controller';
 import { RabbitModule } from 'src/rabbit/rabbit.module';
+import { DispatchWSService } from './dispatchws.service';
 
 @Module({
-    imports: [
-        RabbitModule,
-        ClientsModule.register([
-            {
-                name: 'RIDE_EVENTS',
-                transport: Transport.REDIS,
-                options: { host: 'localhost', port: 6379 },
-            },
-        ]),
-    ],
+    imports: [RabbitModule],
     controllers: [RideEventsController],
-    providers: [DispatchWSGateway],
+    providers: [DispatchWSGateway, DispatchWSService],
 })
 export class DispatchWSModule {}

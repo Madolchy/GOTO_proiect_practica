@@ -1,6 +1,5 @@
-import { Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { Logger } from '@nestjs/common';
 import {
     ConnectedSocket,
     MessageBody,
@@ -12,6 +11,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { LatLng, LatLngSchema } from 'src/gen/common_pb';
+import { RedisService } from 'src/redis/redis.service';
+import { DispatchWSService } from './dispatchws.service';
 
 @WebSocketGateway({
     namespace: '/live-driver',
@@ -24,9 +25,12 @@ import { LatLng, LatLngSchema } from 'src/gen/common_pb';
     },
 })
 export class DispatchWSGateway implements OnGatewayConnection<Socket>, OnGatewayDisconnect<Socket> {
+    private readonly logger = new Logger(DispatchWSGateway.name);
+
     constructor(
-        @Inject('RIDE_EVENTS') private redis: ClientProxy,
         private readonly amqp: AmqpConnection,
+        private readonly redis: RedisService,
+        private readonly dispatchWSService: DispatchWSService,
     ) {}
 
     @WebSocketServer() server: Server;
@@ -57,16 +61,31 @@ export class DispatchWSGateway implements OnGatewayConnection<Socket>, OnGateway
         });
     }
 
+    // here we'd check the driver token to be sure
     @SubscribeMessage('ride:accept')
     async handleAccept(@MessageBody() { rideId }: { rideId: string }, @ConnectedSocket() client: Socket) {
-        console.log('wow ride got accepted!!!');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const driverId = client.data.driverId as string | undefined;
-        if (!rideId || !driverId) return;
+        if (!rideId || !driverId) {
+            this.logger.warn('Driver attempted to accept without a rideId or driverId.');
+            return;
+        }
+
+        const isValidRide = await this.dispatchWSService.isValidRide(driverId, rideId);
+        if (!isValidRide) return;
+
+        await this.dispatchWSService.tryRemoveLock(driverId, rideId);
+
         await this.amqp.publish('ride.events', 'driver.found', { rideId, driverId });
     }
 
     @SubscribeMessage('ride:declined')
     handleDecline(@MessageBody() { rideId }: { rideId: string }, @ConnectedSocket() client: Socket) {
         console.log('wow ride got declined!!!');
+    }
+
+    @SubscribeMessage('ride:pickup')
+    handlePickup(@MessageBody() { msg }: any, @ConnectedSocket() client: Socket) {
+        console.log('wow rider accepted the pickup');
     }
 }
