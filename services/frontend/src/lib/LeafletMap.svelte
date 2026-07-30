@@ -6,11 +6,14 @@
 	import markerIcon from 'leaflet/dist/images/marker-icon.png';
 	import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 	import type { LatLng } from './stores/markers.svelte.ts';
+	import type { MapMarker } from './utils/markers';
+	import { syncMarkers } from './utils/leaflet';
 
 	type Props = {
 		center?: LatLng;
 		zoom?: number;
 		markers?: LatLng[];
+		driverMarkers?: MapMarker[];
 		onMapClick?: (latlng: LatLng) => void;
 		class?: string;
 	};
@@ -19,6 +22,7 @@
 		center = { lat: 51.505, lng: -0.09 },
 		zoom = 13,
 		markers = [],
+		driverMarkers = [],
 		onMapClick,
 		class: className,
 		...rest
@@ -26,7 +30,8 @@
 
 	let mapEl: HTMLDivElement;
 	let map = $state<L.Map | undefined>(undefined);
-	let rendered: L.Marker[] = [];
+	let renderedPins: L.Marker[] = [];
+	let renderedDrivers = new Map<string, L.Marker>();
 
 	onMount(() => {
 		L.Icon.Default.mergeOptions({
@@ -34,7 +39,6 @@
 			iconUrl: markerIcon,
 			shadowUrl: markerShadow
 		});
-
 		// Fix for leaflet bug with vite having an appended wrong path.
 		L.Icon.Default.imagePath = '';
 
@@ -49,24 +53,26 @@
 		});
 
 		return () => {
-			if (!map) return;
-			map.off('click');
-			map.remove();
+			map?.off('click');
+			map?.remove();
 		};
 	});
 
 	$effect(() => {
 		if (!map) return;
+		const layer = map;
 
-		const layer = map; // capture so the closure keeps the narrowed type
-		for (const m of rendered) m.remove();
+		for (const m of renderedPins) m.remove();
 
-		rendered = markers.map((latlng) => L.marker(latlng).addTo(layer));
+		renderedPins = markers.map((latlng) => L.marker(latlng).addTo(layer));
 	});
 
 	$effect(() => {
-		if (!map) return;
-		map.setView(center, zoom);
+		if (map) syncMarkers(map, driverMarkers, renderedDrivers);
+	});
+
+	$effect(() => {
+		map?.setView(center, zoom);
 	});
 </script>
 

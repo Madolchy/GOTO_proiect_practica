@@ -25,7 +25,7 @@
 		    origin: markers[0],
 			destination: markers[1],
 		}),
-	onSuccess: (data) => onConfirm(data.rideId)
+	onSuccess: (data) => onConfirm(data)
 	}));
 </script>
 
