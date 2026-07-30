@@ -12,6 +12,7 @@
 		zoom?: number;
 		markers?: LatLng[];
 		activePosition?: LatLng;
+		clientPosition: { origin: LatLng; destination: LatLng } | null;
 		onMapClick?: (latlng: LatLng) => void;
 		class?: string;
 	};
@@ -21,6 +22,7 @@
 		zoom = 13,
 		markers = [],
 		activePosition,
+		clientPosition,
 		onMapClick,
 		class: className,
 		...rest
@@ -30,6 +32,16 @@
 	let map = $state<L.Map | undefined>(undefined);
 	let rendered: L.Marker[] = [];
 	let activeMarker: L.Marker | undefined;
+	let clientOriginMarker: L.Marker | undefined;
+	let clientDestionationMarker: L.Marker | undefined;
+
+	function syncMarker(
+		pos: LatLng | undefined,
+		current: L.Marker | undefined
+	): L.Marker | undefined {
+		current?.remove();
+		return pos ? L.marker(pos).addTo(map!) : undefined;
+	}
 
 	onMount(() => {
 		L.Icon.Default.mergeOptions({
@@ -43,8 +55,7 @@
 
 		map = L.map(mapEl).setView(center, zoom);
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
 		map.on('click', (e: L.LeafletMouseEvent) => {
@@ -72,10 +83,17 @@
 
 	$effect(() => {
 		if (!map) return;
-		if (activeMarker) activeMarker.remove();
-		if (activePosition) {
-			activeMarker = L.marker(activePosition).addTo(map);
-		}
+		activeMarker = syncMarker(activePosition, activeMarker);
+	});
+
+	$effect(() => {
+		if (!map || !clientPosition) return;
+		clientOriginMarker = syncMarker(clientPosition.origin, clientOriginMarker);
+	});
+
+	$effect(() => {
+		if (!map || !clientPosition) return;
+		clientDestionationMarker = syncMarker(clientPosition.destination, clientDestionationMarker);
 	});
 </script>
 

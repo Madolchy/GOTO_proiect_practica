@@ -19,11 +19,6 @@ export function createOfferModal() {
 	});
 
 	function forClient(payload: ClientRide): Promise<boolean> {
-		// should be enforced by backend to not happen
-		if (state.payload !== null) {
-			return Promise.resolve(false);
-		}
-
 		state.payload = payload;
 		return new Promise((resolve) => {
 			state.resolve = resolve;

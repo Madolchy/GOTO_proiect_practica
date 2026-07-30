@@ -71,6 +71,7 @@
 		"@fontsource-variable/cascadia-code": "^5.2.2",
 		"@tanstack/svelte-query": "^6.1.36",
 		"class-variance-authority": "^0.7.1",
+		"geolib": "^3.3.14",
 		"leaflet": "^1.9.4",
 		"lucide-react": "^1.24.0",
 		"shadcn": "^4.13.0",

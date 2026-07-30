@@ -1,13 +1,18 @@
-import { offerModal } from '$lib/offerModalState.svelte';
+import { DISPATCH_BACKEND_URL } from '$app/env/public';
+import { WEBSOCKET_EVENTS, type SocketEvents } from '$lib/types/socketevents';
 import { io, type Socket } from 'socket.io-client';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 type Status = 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error';
+type Listener = (data) => void;
 
 export class SocketService {
-	url = $state('');
+	readonly url = `${DISPATCH_BACKEND_URL}/live-driver`;
 	status = $state<Status>('idle');
 	messages = $state<string[]>([]);
 	connected = $derived(this.status === 'connected');
+
+	listeners = new SvelteMap<keyof SocketEvents, SvelteSet<Listener>>();
 
 	private sock: Socket | null = null;
 	private getAuthToken: () => string | null = () => null;
@@ -17,12 +22,23 @@ export class SocketService {
 	};
 
 	connect = () => {
+		this.disconnect();
+
 		if (this.status === 'connecting' || this.status === 'connected') return;
 		this.status = 'connecting';
 
 		this.sock = io(this.url, {
 			auth: (cb) => cb({ token: this.getAuthToken() })
 		});
+
+		for (const event of WEBSOCKET_EVENTS) {
+			this.sock.on(event, (payload) => {
+				const handlers = this.listeners.get(event);
+				if (!handlers || handlers.size === 0) return;
+
+				handlers.forEach((fn) => fn(payload));
+			});
+		}
 
 		this.sock.on('connect', () => {
 			this.status = 'connected';
@@ -33,18 +49,28 @@ export class SocketService {
 		this.sock.on('connect_error', () => {
 			this.status = 'error';
 		});
-		this.sock.on('ride:offer', async (payload) => {
-			const driverResponse = await offerModal.forClient(payload);
-			if (driverResponse === true) {
-				console.log('Sending that we accepted ride');
-				this.sock?.emit('ride:accept', { rideId: payload.rideId });
-			} else {
-				this.sock?.emit('ride:declined', { rideId: payload.rideId });
-			}
-		});
 	};
 
+	on<K extends keyof SocketEvents>(event: K, handler: (data: SocketEvents[K]) => void) {
+		if (!this.listeners.has(event)) {
+			this.listeners.set(event, new SvelteSet());
+		}
+
+		const set = this.listeners.get(event)!;
+		set.add(handler);
+
+		return () => {
+			set.delete(handler);
+			if (this.listeners.size === 0) this.listeners.delete(event);
+		};
+	}
+
+	emit<K extends keyof SocketEvents>(event: K, data?: any) {
+		this.sock?.emit(event, data);
+	}
+
 	disconnect = () => {
+		this.sock?.removeAllListeners();
 		this.sock?.disconnect();
 		this.sock = null;
 		this.status = 'idle';
