@@ -1,21 +1,13 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { Controller, Post, Body} from '@nestjs/common';
 import { DispatchRiderDto } from './dto/dispatch-rider.dto';
-import { uuidv7 } from 'uuidv7';
+import { DispatchRestService } from './dispatchrest.service';
 
 @Controller('dispatch')
 export class DispatchRestController {
-    constructor(private readonly amqp: AmqpConnection) {}
+    constructor(private readonly rideDispatchService: DispatchRestService) {}
 
     @Post('ride')
     async dispatchRider(@Body() dto: DispatchRiderDto) {
-        const rideId = uuidv7();
-        await this.amqp.publish('ride.commands', 'find-driver', {
-            rideId,
-            userId: dto.userId,
-            origin: dto.origin,
-            destination: dto.destination,
-        });
-        return { rideId };
+        return await this.rideDispatchService.requestRide(dto);
     }
 }

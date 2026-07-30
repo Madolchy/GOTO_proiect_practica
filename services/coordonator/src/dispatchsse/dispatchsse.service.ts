@@ -7,22 +7,22 @@ import { MessageEvent } from '@nestjs/common';
 export class DispatchSSEService {
     private readonly streams = new Map<string, Subject<MessageEvent>>();
 
-    subscribe(rideId: string): Observable<MessageEvent> {
-        let subject = this.streams.get(rideId);
+    subscribe(userId: string): Observable<MessageEvent> {
+        let subject = this.streams.get(userId);
         if (!subject) {
             subject = new Subject<MessageEvent>();
-            this.streams.set(rideId, subject);
+            this.streams.set(userId, subject);
         }
         return subject.asObservable();
     }
 
     // Called by the @EventPattern handler
-    push(rideId: string, data: string | object, event = 'driver.found'): void {
-        this.streams.get(rideId)?.next({ type: event, data });
+    push(userId: string, data: string | object, event = 'driver.found'): void {
+        this.streams.get(userId)?.next({ type: event, data });
     }
 
-    complete(rideId: string): void {
-        this.streams.get(rideId)?.complete();
-        this.streams.delete(rideId);
+    complete(userId: string): void {
+        this.streams.get(userId)?.complete();
+        this.streams.delete(userId);
     }
 }
