@@ -18,10 +18,11 @@
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-        "test:e2e": "jest --config ./test/jest-e2e.json",
-        "proto:generate": "protoc --proto_path=./src/proto --ts_proto_out=./src/rideprice/grpc/gen/proto --ts_proto_opt=nestJs=true ./src/proto/price.proto"
+        "test:e2e": "jest --config ./test/jest-e2e.json"
     },
-    "dependencies": {
+	"dependencies": {
+		"@goto/domain": "workspace:*",
+		"@goto/proto": "workspace:*",
         "@grpc/grpc-js": "^1.14.4",
         "@grpc/proto-loader": "^0.8.1",
         "@nestjs/common": "^11.0.1",

@@ -1,0 +1,33 @@
+{
+    "name": "@goto/proto",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "files": ["proto", "src", "dist"],
+    "exports": {
+        "./connect/*": {
+            "types": "./dist/gen/connect/*.d.ts",
+            "default": "./dist/gen/connect/*.js"
+        },
+        "./nest/*": {
+            "types": "./dist/gen/nest/*.d.ts",
+            "default": "./dist/gen/nest/*.js"
+        },
+        "./proto/*": "./proto/*"
+    },
+    "scripts": {
+        "generate": "buf generate",
+        "build": "tsc -p tsconfig.json",
+        "prepublishOnly": "pnpm generate && pnpm build"
+    },
+    "dependencies": {
+        "@bufbuild/protobuf": "^2.12.1",
+        "@nestjs/microservices": "^11.0.1",
+        "rxjs": "^7.8.1"
+    },
+    "devDependencies": {
+        "@bufbuild/buf": "^1.72.0",
+        "@bufbuild/protoc-gen-es": "^2.12.1",
+        "ts-proto": "^2.12.0"
+    }
+}

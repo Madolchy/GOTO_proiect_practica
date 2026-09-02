@@ -1,12 +1,16 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { EmptyRelations } from 'drizzle-orm';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { NodePgTransaction } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+
+export type DispatchTransaction = NodePgTransaction<EmptyRelations>;
 
 @Injectable()
 export class DrizzleService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(DrizzleService.name);
-    private _db: NodePgDatabase & { $client: Pool };
+    private _db: NodePgDatabase<EmptyRelations> & { $client: Pool; }
 
     constructor(private readonly configService: ConfigService) {}
 

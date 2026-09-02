@@ -1,16 +1,11 @@
-export type LatLng = { lat: number; lng: number };
+import type { LatLng } from '@goto/domain';
 
 let driverPosition = $state<LatLng>();
-const driverId = $state(Math.floor(100000 + Math.random() * 900000));
-
-export function getDriverId() {
-    return driverId
-}
 
 export function getActivePosition() {
 	return driverPosition;
 }
 
 export function updateActivePosition(latlng: LatLng) {
-    driverPosition = latlng;
+	driverPosition = latlng;
 }

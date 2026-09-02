@@ -1,20 +1,16 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createClient, type RedisClientType} from 'redis';
+import type { RedisClientType } from 'redis';
+import { RedisClient } from './redis.client';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(RedisService.name);
     readonly client: RedisClientType;
-    // node-redis locks a client out of normal commands once it subscribes,
-    // so a duplicate is dedicated to SUBSCRIBE/PMESSAGE only.
     readonly subscriber: RedisClientType;
 
-    constructor(config: ConfigService) {
-        this.client = createClient({
-            url: config.getOrThrow('REDIS_URL'),
-        });
-        this.subscriber = this.client.duplicate();
+    constructor(private readonly redisClient: RedisClient) {
+        this.client = redisClient.client;
+        this.subscriber = redisClient.subscriber;
     }
 
     async onModuleInit(): Promise<void> {
@@ -28,5 +24,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     async onModuleDestroy(): Promise<void> {
         await this.subscriber.quit();
         await this.client.quit();
+    }
+
+    async onKeyExpired(callback: (key: string) => void | Promise<void>): Promise<void> {
+        await this.subscriber.pSubscribe('__keyevent@*__:expired', async (key) => {
+            await callback(key);
+        });
     }
 }

@@ -1,0 +1,27 @@
+{
+    "name": "@goto/map",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "files": ["src"],
+    "exports": {
+        ".": {
+            "types": "./src/index.ts",
+            "svelte": "./src/index.ts",
+            "import": "./src/index.ts",
+            "default": "./src/index.ts"
+        }
+    },
+    "sideEffects": true,
+    "dependencies": {
+        "@goto/domain": "workspace:*",
+        "leaflet": "^1.9.4"
+    },
+    "devDependencies": {
+        "@types/leaflet": "^1.9.22",
+        "svelte": "^5.56.1"
+    },
+    "peerDependencies": {
+        "svelte": "^5.0.0"
+    }
+}

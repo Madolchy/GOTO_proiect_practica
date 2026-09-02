@@ -4,7 +4,7 @@ import { io, type Socket } from 'socket.io-client';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 type Status = 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error';
-type Listener = (data) => void;
+type Listener = (data: unknown) => void;
 
 export class SocketService {
 	readonly url = `${DISPATCH_BACKEND_URL}/live-driver`;
@@ -57,17 +57,24 @@ export class SocketService {
 		}
 
 		const set = this.listeners.get(event)!;
-		set.add(handler);
+		set.add(handler as Listener);
 
 		return () => {
-			set.delete(handler);
+			set.delete(handler as Listener);
 			if (this.listeners.size === 0) this.listeners.delete(event);
 		};
 	}
 
-	emit<K extends keyof SocketEvents>(event: K, data?: any) {
+	emit<K extends keyof SocketEvents>(event: K, data?: any, ack?: (response: any) => void) {
 		this.sock?.emit(event, data);
 	}
+
+	async emitWithAck<K extends keyof SocketEvents>(event: K, data?: SocketEvents[K]) {
+		return await this.sock?.timeout(10000).emitWithAck(event, data);
+	}
+
+	// Usage:
+	// const result = await client.emitWithAck('updateUser', { id: 42 });
 
 	disconnect = () => {
 		this.sock?.removeAllListeners();

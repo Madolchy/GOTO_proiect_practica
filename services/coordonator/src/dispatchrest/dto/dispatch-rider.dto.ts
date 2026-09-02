@@ -1,9 +1,4 @@
-import {
-    IsNotEmpty,
-    IsString,
-    ValidateNested,
-    IsDefined,
-} from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LatLngDto } from '../../price/dto/get-price.dto';
 

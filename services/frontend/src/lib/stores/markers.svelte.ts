@@ -1,4 +1,5 @@
-export type LatLng = { lat: number; lng: number };
+import type { LatLng } from '@goto/domain';
+
 const MARKER_EPSILON = 0.0001;
 
 const items = $state<LatLng[]>([]);

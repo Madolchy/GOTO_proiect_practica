@@ -1,7 +1,7 @@
 import { Controller, OnModuleInit } from '@nestjs/common';
 import { DispatchWSGateway } from './dispatchws.gateway';
 import { RedisService } from 'src/redis/redis.service';
-import { LatLng } from 'src/gen/common_pb';
+import { LatLng } from '@goto/proto/connect/common_pb';
 
 @Controller()
 export class RideEventsController implements OnModuleInit {

@@ -1,9 +1,13 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { getMarkers, clearMarkers } from '$lib/stores/markers.svelte';
-	import DriverFoundStep from './components/ui/modals/DriverFoundStep.svelte';
-	import DriverStep from './components/ui/modals/DriverStep.svelte';
-	import PriceStep from './components/ui/modals/PriceStep.svelte';
+	import {
+		PriceStep,
+		DriverStep,
+		DriverFoundStep,
+		DriveComplet,
+		RideFailed
+	} from './components/ui/modals';
 	import { rideStore } from './stores/ride.svelte';
 	import type { Ride } from './types/sse';
 
@@ -11,12 +15,28 @@
 	const open = $derived(markers.length === 2);
 
 	function handleOpenChange(next: boolean) {
-		if (!next) clearMarkers();
+		if (next) return;
+
+		if (rideStore.current.status === 'completed' || rideStore.current.status === 'cancelled') {
+			rideStore.setCurrent({ status: 'idle' });
+		}
+
+		clearMarkers();
+	}
+
+	function finishCompletedRide() {
+		rideStore.setCurrent({ status: 'idle' });
+		clearMarkers();
+	}
+
+	function handleRideFailed() {
+		rideStore.setCurrent({ status: 'idle' });
+		clearMarkers();
 	}
 
 	function handleRideRequest(ride: Ride) {
 		console.log('Mutation responded with: ', ride);
-		console.log("Received ride from backend: ", ride);
+		console.log('Received ride from backend: ', ride);
 		rideStore.setCurrent(ride);
 	}
 </script>
@@ -30,8 +50,12 @@
 			<PriceStep {markers} onConfirm={handleRideRequest} />
 		{:else if rideStore?.current?.status === 'searching'}
 			<DriverStep />
-		{:else if rideStore?.current?.rideId && rideStore?.current?.status === 'driver_assigned'}
+		{:else if rideStore?.current?.rideId && rideStore?.current?.status === 'en_route'}
 			<DriverFoundStep />
+		{:else if rideStore?.current?.status === 'completed'}
+			<DriveComplet onDone={finishCompletedRide} />
+		{:else if rideStore?.current?.status === 'cancelled'}
+			<RideFailed onDone={handleRideFailed} />
 		{/if}
 	</Dialog.Content>
 </Dialog.Root>

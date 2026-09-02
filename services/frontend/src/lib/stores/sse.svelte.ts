@@ -2,7 +2,7 @@ import { COORDINATOR_BACKEND_URL } from '$app/env/public';
 import { SSE_EVENTS_NAMES, type SseEvents } from '$lib/types/sse';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
-type Listener = (data) => void;
+type Listener = (data: unknown) => void;
 
 export class SseClient {
 	private es: EventSource | null = null;
@@ -28,7 +28,7 @@ export class SseClient {
 				const handlers = this.listeners.get(name);
 				if (!handlers || handlers.size === 0) return;
 
-				const data = JSON.parse(e.data);
+				const data: unknown = JSON.parse(e.data);
 				handlers.forEach((fn) => fn(data));
 			});
 		}
@@ -46,10 +46,10 @@ export class SseClient {
 		}
 
 		const set = this.listeners.get(event)!;
-		set.add(handler);
+		set.add(handler as Listener);
 
 		return () => {
-			set.delete(handler);
+			set.delete(handler as Listener);
 			if (set.size === 0) this.listeners.delete(event);
 		};
 	}

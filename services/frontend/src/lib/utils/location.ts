@@ -1,4 +1,4 @@
-import type { LatLng } from '$lib/stores/markers.svelte';
+import type { LatLng } from '@goto/domain';
 
 export function getGeolocation(navigator: Navigator): Promise<LatLng | undefined> {
 	return new Promise((resolve) => {

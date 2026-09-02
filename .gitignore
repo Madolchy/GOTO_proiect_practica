@@ -32,3 +32,4 @@ services/*/.vscode/
 # Local-only reference project (kept on disk, not version controlled)
 gotoFrontendExample/
 services/frontend/src/env.ts
+services/dispatch/drizzle/20260730120849_lumpy_elektra/

@@ -1,3 +1,9 @@
+packages:
+  - "."
+  - "../../packages/*"
+
 allowBuilds:
-  esbuild: set this to true or false
+  '@bufbuild/buf': true
+  esbuild: true
+  protobufjs: true
   unrs-resolver: true

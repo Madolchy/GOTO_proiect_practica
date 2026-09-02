@@ -1,53 +1,40 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DispatchRiderDto } from './dto/dispatch-rider.dto';
-import { RedisService } from 'src/redis/redis.service';
 import { uuidv7 } from 'uuidv7';
-import { RideStatus } from 'src/types/status';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { UsersRepository } from 'src/drizzle/users.repository';
 
 @Injectable()
 export class DispatchRestService {
     private readonly logger = new Logger(DispatchRestService.name);
 
-    constructor(
-        private readonly redis: RedisService,
-        private readonly amqp: AmqpConnection,
-    ) {}
+    constructor(private readonly users: UsersRepository) {}
 
     async requestRide(dto: DispatchRiderDto) {
-        const userRideKey = `coordinator:ride:${dto.userId}`;
         const newRideId = uuidv7();
 
-        const existingRideId = await this.redis.client.set(userRideKey, newRideId, {
-            condition: 'NX',
-            expiration: { type: 'EX', value: 600 },
-            GET: true,
+        // TEMP: redis version commented out, outbox relay not built yet
+        // const userRideKey = `coordinator:ride:${dto.userId}`;
+        // const existingRideId = await this.redis.client.set(userRideKey, newRideId, {
+        //     condition: 'NX',
+        //     expiration: { type: 'EX', value: 600 },
+        //     GET: true,
+        // });
+
+        const claimed = await this.users.claimRide(dto.userId, newRideId, {
+            eventType: 'ride.requested',
+            payload: {
+                rideId: newRideId,
+                userId: dto.userId,
+                origin: dto.origin,
+                destination: dto.destination,
+            },
         });
 
-        if (existingRideId) {
-            this.logger.log(`User ${dto.userId} already has active ride: ${existingRideId}`);
-            return { rideId: existingRideId, isExisting: true };
+        if (claimed.isExisting) {
+            this.logger.log(`User ${dto.userId} already has active ride: ${claimed.rideId}`);
+            return { rideId: claimed.rideId, isExisting: true };
         }
 
-        return this.createNewRideState(newRideId, dto);
-    }
-
-    private async createNewRideState(rideId: string, dto: DispatchRiderDto) {
-        // multi write so we will need outbox box in future
-        await this.redis.client.hSet(`coordinator:ride:${rideId}`, {
-            userId: dto.userId,
-            rideId,
-            status: 'searching' as RideStatus,
-        });
-
-        // AMQP Publish
-        await this.amqp.publish('ride.commands', 'find-driver', {
-            rideId,
-            userId: dto.userId,
-            origin: dto.origin,
-            destination: dto.destination,
-        });
-
-        return { rideId, status: 'searching' };
+        return { rideId: newRideId, status: 'searching' };
     }
 }

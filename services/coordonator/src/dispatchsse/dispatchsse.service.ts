@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { MessageEvent } from '@nestjs/common';
@@ -19,6 +18,12 @@ export class DispatchSSEService {
     // Called by the @EventPattern handler
     push(userId: string, data: string | object, event = 'driver.found'): void {
         this.streams.get(userId)?.next({ type: event, data });
+    }
+
+    pushAll(data: string | object): void {
+        for (const stream of this.streams.values()) {
+            stream.next({ type: 'driver.list', data });
+        }
     }
 
     complete(userId: string): void {

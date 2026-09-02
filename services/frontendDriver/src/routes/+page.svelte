@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { getDistance } from 'geolib';
-	import LeafletMap from '$lib/LeafletMap.svelte';
-	import { getActivePosition, getDriverId, updateActivePosition } from '$lib/stores/markers.svelte';
-	import { completRide, connectDriver, disconnectDriver, getLastReadOrigin, getStatus, pickupClient } from '$lib/stores/driver.svelte';
+	import { LeafletMap } from '@goto/map';
+	import type { LatLng } from '@goto/domain';
+	import { getActivePosition, updateActivePosition } from '$lib/stores/markers.svelte';
+	import { completRide, connectDriver, disconnectDriver, getDriverId, getLastReadOrigin, getStatus, pickupClient } from '$lib/stores/driver.svelte';
 	import { socket } from '$lib/stores/socket.svelte';
 	import { DISPATCH_BACKEND_URL } from '$app/env/public';
 	import OfferModal from '$lib/OfferModal.svelte';
@@ -11,9 +12,9 @@
 	import DriverActionMap from '$lib/components/driver-action/driver-action-map.svelte';
 	// Shown immediately. Recentered to the visitor's real position once
 	// the browser geolocation API resolves (requires user permission).
-	let center = $state<{ lat: number; lng: number }>({ lat: 44.4268, lng: 26.1025 });
+	let center = $state<LatLng>({ lat: 44.4268, lng: 26.1025 });
 
-	socket.setAuthTokenGetter(() => getDriverId().toString());
+	socket.setAuthTokenGetter(() => getDriverId());
 	onMount(() => {
 		if (!navigator.geolocation) return;
 

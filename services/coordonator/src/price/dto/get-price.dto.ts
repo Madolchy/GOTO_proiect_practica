@@ -1,7 +1,8 @@
 import { IsNumber, Min, Max, ValidateNested, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
+import type { LatLng } from '@goto/domain';
 
-export class LatLngDto {
+export class LatLngDto implements LatLng {
     @IsNumber()
     @Min(-90)
     @Max(90)

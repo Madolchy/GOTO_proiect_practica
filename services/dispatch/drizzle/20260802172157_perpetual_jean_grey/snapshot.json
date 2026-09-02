@@ -1,0 +1,276 @@
+{
+  "version": "8",
+  "dialect": "postgres",
+  "id": "ca81fc9e-d234-4d52-b45a-d1a1c2712065",
+  "prevIds": [
+    "ca3411eb-e3e7-48b6-8917-699e7b00152d"
+  ],
+  "ddl": [
+    {
+      "isRlsEnabled": false,
+      "name": "drivers",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "offered",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "rides",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "drivers"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "drivers"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ride_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "driver_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "origin_lat",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "origin_lng",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "destination_lat",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "destination_lng",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "assigned_driverId",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "offer_expire_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "rides"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "ride_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "rides",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "offered_ride_id_rides_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "driver_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "drivers",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "offered_driver_id_drivers_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "columns": [
+        "ride_id",
+        "driver_id"
+      ],
+      "nameExplicit": false,
+      "name": "offered_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "offered"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "users_pkey",
+      "schema": "public",
+      "table": "drivers",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "rides_pkey",
+      "schema": "public",
+      "table": "rides",
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}

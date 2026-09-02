@@ -5,8 +5,7 @@
 	import { socket } from '$lib/stores/socket.svelte';
 	import { offerModal } from '$lib/offerModalState.svelte';
 	import { clientPositionStore } from '$lib/stores/ride.svelte';
-	import { startRide } from '$lib/stores/driver.svelte';
-	import { getDriverId } from '$lib/stores/markers.svelte';
+	import { startRide, getDriverId } from '$lib/stores/driver.svelte';
 
 	const queryClient = new QueryClient();
 	let { children } = $props();
@@ -21,9 +20,8 @@
 				const driverResponse = await offerModal.forClient(payload);
 				if (driverResponse === true) {
 					console.log('Sending that we accepted ride', payload);
-					socket.emit('ride:accept', { driverId: getDriverId(), rideId: payload.rideId });
-
-					startRide();
+					const result = await socket.emitWithAck('ride:accept'); // could do optimistic later
+					if (result.ok) startRide()
 				} else {
 					socket.emit('ride:declined', { rideId: payload.rideId });
 				}

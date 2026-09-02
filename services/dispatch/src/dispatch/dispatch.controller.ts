@@ -1,8 +1,8 @@
-import { Controller } from '@nestjs/common';
-import { RabbitSubscribe, AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { BadRequestException, Controller, ValidationPipe } from '@nestjs/common';
+import { RabbitSubscribe, RabbitPayload, AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { DispatchService } from './dispatch.service';
 import { RedisService } from 'src/redis/redis.service';
-import { LatLng } from 'src/gen/common_pb';
+import { CreateRideDto } from './dto/create-ride.dto';
 import { Channel, Message } from 'amqplib';
 
 @Controller()
@@ -29,29 +29,39 @@ export class DispatchController {
                 'x-dead-letter-routing-key': 'coordinator.driver.found',
             },
         },
-        errorHandler: (channel: Channel, msg: Message) => channel.reject(msg, true),
+        errorHandler: (channel: Channel, msg: Message, err?: unknown) =>
+            // permanent failures (bad payload) -> dead-letter, don't requeue forever
+            // transient failures (db down etc.) -> requeue
+            channel.reject(msg, !(err instanceof BadRequestException)),
     })
-    async onFindDriver(msg: { rideId: string; userId: string; origin: LatLng; destination: LatLng }) {
-        console.log('Some bitch ass nigga wants a ride: ', msg.userId, ' with the id: ', msg.rideId);
+    async onFindDriver(
+        @RabbitPayload(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
+        dto: CreateRideDto,
+    ) {
+        console.log('Some bitch ass nigga wants a ride: ', dto.userId, ' with the id: ', dto.rideId);
         console.log('Finding a driver: ');
+        const created = await this.dispatchService.createRide(dto);
+        if (!created) {
+            // duplicate delivery — already recorded, ack quietly
+            return;
+        }
+        // const driverId = await this.dispatchService.findDriverForRide(msg.rideId, msg.userId, msg.origin, msg.destination);
+        // const payload = JSON.stringify({
+        //     rideId: msg.rideId,
+        //     userId: msg.userId,
+        //     clientOrigin: msg.origin,
+        //     clientDestination: msg.destination,
+        //     driverId: driverId,
+        // });
 
-        const driverId = await this.dispatchService.findDriverForRide(msg.rideId, msg.userId, msg.origin, msg.destination);
-        const payload = JSON.stringify({
-            rideId: msg.rideId,
-            userId: msg.userId,
-            clientOrigin: msg.origin,
-            clientDestination: msg.destination,
-            driverId: driverId,
-        });
-
-        await this.redis.client
-            .multi()
-            .hSet(`dispatch:ride:${msg.rideId}:offer`, {
-                driverId: String(driverId),
-                userId: msg.userId,
-                status: 'offered',
-            })
-            .publish('ride.offer.created', payload)
-            .exec();
+        // await this.redis.client
+        //     .multi()
+        //     .hSet(`dispatch:ride:${msg.rideId}:offer`, {
+        //         driverId: String(driverId),
+        //         userId: msg.userId,
+        //         status: 'offered',
+        //     })
+        //     .publish('ride.offer.created', payload)
+        //     .exec();
     }
 }

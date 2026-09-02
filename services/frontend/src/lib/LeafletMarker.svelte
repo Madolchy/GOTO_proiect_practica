@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LatLng } from './stores/markers.svelte.ts';
+	import type { LatLng } from '@goto/domain';
 
 	let { latlng }: { latlng: LatLng } = $props();
 </script>

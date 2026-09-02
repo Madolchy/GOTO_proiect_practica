@@ -1,9 +1,11 @@
 import { Global, Module } from '@nestjs/common';
-import { RedisService } from './redis.service';
+import { DriversRepository } from './drivers.repository';
+import { DrizzleService } from './drizzle.service';
+import { RidesRepository } from './rides.repository';
 
 @Global()
 @Module({
-    providers: [DrizzleService],
-    exports: [DrizzleService],
+    providers: [DrizzleService, DriversRepository, RidesRepository],
+    exports: [DrizzleService, DriversRepository, RidesRepository],
 })
-export class RedisModule {}
+export class DrizzleModule {}

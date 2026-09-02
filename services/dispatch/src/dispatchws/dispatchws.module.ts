@@ -8,5 +8,6 @@ import { DispatchWSService } from './dispatchws.service';
     imports: [RabbitModule],
     controllers: [RideEventsController],
     providers: [DispatchWSGateway, DispatchWSService],
+    exports: [DispatchWSGateway]
 })
 export class DispatchWSModule {}

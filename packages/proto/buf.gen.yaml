@@ -1,0 +1,15 @@
+version: v2
+plugins:
+  - local: protoc-gen-es
+    out: src/gen/connect
+    opt:
+      - target=ts
+      - import_extension=js
+    include_imports: true
+  - local: protoc-gen-ts_proto
+    out: src/gen/nest
+    opt:
+      - nestJs=true
+      - importSuffix=.js
+inputs:
+  - directory: proto

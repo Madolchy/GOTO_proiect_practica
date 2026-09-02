@@ -1,5 +1,5 @@
 import { COORDINATOR_BACKEND_URL } from '$app/env/public';
-import type { LatLng } from '$lib/stores/markers.svelte';
+import type { LatLng } from '@goto/domain';
 
 export async function requestRide(params: {
     userId: string

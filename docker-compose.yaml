@@ -1,6 +1,6 @@
 services:
     rabbitmq:
-        image: rabbitmq:3-management
+        image: rabbitmq:4.3-management
         container_name: rabbit
         hostname: rabbit
         ports:
@@ -20,8 +20,57 @@ services:
 
     redis:
         image: redis:7-alpine
+        container_name: redis
         ports:
             - "6379:6379"
+        volumes:
+            - redis-data:/data
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        command: redis-server /usr/local/etc/redis/redis.conf
         restart: unless-stopped
+
+    redis-insight:
+        image: redis/redisinsight:latest
+        container_name: redis-insight
+        ports:
+            - "5540:5540"
+        volumes:
+            - redis-insight-data:/data
+        depends_on:
+            - redis
+        restart: unless-stopped
+
+    postgres:
+        image: postgres:18
+        container_name: postgres
+        hostname: postgres
+        ports:
+            - "127.0.0.1:5432:5432"
+        environment:
+            POSTGRES_PASSWORD: badendnight
+            POSTGRES_USER: postgres
+            POSTGRES_DB: postgres
+        volumes:
+            - postgres-data:/var/lib/postgresql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+        restart: unless-stopped
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin
+        restart: unless-stopped
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: badendnight
+        ports:
+            - "5433:80"
+
 volumes:
     rabbitmq-data:
+    redis-data:
+    redis-insight-data:
+    postgres-data:

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PriceController } from './price.controller';
 import { PriceService } from './price.service';
-import path from 'path';
 
 @Module({
     imports: [
@@ -12,7 +11,7 @@ import path from 'path';
                 transport: Transport.GRPC,
                 options: {
                     package: 'goto.v1',
-                    protoPath: path.join(__dirname, '../proto/price.proto'),
+                    protoPath: require.resolve('@goto/proto/proto/price.proto'),
                     url: 'localhost:5200',
                 },
             },

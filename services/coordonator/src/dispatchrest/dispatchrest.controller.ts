@@ -1,4 +1,4 @@
-import { Controller, Post, Body} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { DispatchRiderDto } from './dto/dispatch-rider.dto';
 import { DispatchRestService } from './dispatchrest.service';
 

@@ -1,9 +1,4 @@
-import {
-    Injectable,
-    Logger,
-    OnModuleDestroy,
-    OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, type RedisClientType } from 'redis';
 
@@ -21,12 +16,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     }
 
     async onModuleInit(): Promise<void> {
-        this.client.on('error', (err) =>
-            this.logger.error(`redis client error: ${err.message}`),
-        );
-        this.subscriber.on('error', (err) =>
-            this.logger.error(`redis subscriber error: ${err.message}`),
-        );
+        this.client.on('error', (err) => this.logger.error(`redis client error: ${err.message}`));
+        this.subscriber.on('error', (err) => this.logger.error(`redis subscriber error: ${err.message}`));
         await this.client.connect();
         await this.subscriber.connect();
         this.logger.log('connected');

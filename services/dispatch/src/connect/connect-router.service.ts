@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { ConnectRouter } from '@connectrpc/connect';
-import { DriverPositionService } from '../gen/driver_location_pb';
+import { DriverPositionService } from '@goto/proto/connect/driver_location_pb';
 import { DriverPositionsService } from '../driver-positions/driver-positions.service';
 
 @Injectable()

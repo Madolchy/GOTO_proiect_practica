@@ -1,5 +1,5 @@
 import { PRICE_BACKEND_URL } from '$app/env/public';
-import type { LatLng } from '$lib/stores/markers.svelte';
+import type { LatLng } from '@goto/domain';
 
 export async function getRidePrice(from: LatLng, to: LatLng) {
 	const response = await fetch(PRICE_BACKEND_URL + '/rideprice', {

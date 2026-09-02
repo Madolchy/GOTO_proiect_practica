@@ -8,8 +8,8 @@
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
     "test": "pnpm -r run test",
-    "proto:sync": "for d in services/*/src/proto; do cp proto/*.proto \"$d/\"; done",
-    "proto:all": "pnpm proto:sync && (cd proto && buf generate) && pnpm -r run proto:generate"
+    "dev:cleardb": "docker compose exec -T postgres psql -U postgres -d goto -v ON_ERROR_STOP=1 -c 'TRUNCATE TABLE public.offered, public.rides, public.drivers RESTART IDENTITY CASCADE;' && docker compose exec -T redis redis-cli FLUSHALL",
+    "proto:all": "pnpm --filter @goto/proto run generate"
   },
   "packageManager": "pnpm@11.3.0"
 }

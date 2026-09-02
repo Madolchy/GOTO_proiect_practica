@@ -1,9 +1,6 @@
-import type { LatLng } from './stores/markers.svelte';
+import type { RideOffer } from '@goto/domain';
 
-type ClientRide = {
-	clientOrigin: LatLng;
-	clientDestination: LatLng;
-};
+type ClientRide = Pick<RideOffer, 'clientOrigin' | 'clientDestination'>;
 
 type OfferResolver = (confirmed: boolean) => void;
 

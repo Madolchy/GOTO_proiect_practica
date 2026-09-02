@@ -5,11 +5,12 @@ import {
     IsDefined,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import type { LatLng } from '@goto/domain';
 
 const toFixed6 = ({ value }: { value: number }) =>
     Math.round(value * 1_000_000) / 1_000_000;
 
-export class LatLngDto {
+export class LatLngDto implements LatLng {
     @Transform(toFixed6)
     @IsNotEmpty()
     @IsNumber()

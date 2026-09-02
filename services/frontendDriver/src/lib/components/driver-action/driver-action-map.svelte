@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { LatLng } from '@goto/domain';
 	import type { DriverState } from '$lib/stores/driver.svelte';
-	import type { LatLng } from '$lib/stores/markers.svelte';
 	import {
 		CompletRideButton,
 		ConnectingButton,

@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { RidePriceService } from '../rideprice.service';
-import * as price from './gen/proto/price';
+import * as price from '@goto/proto/nest/price';
 
 @Controller()
 export class RidePriceGrpcController {

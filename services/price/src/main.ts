@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggingInterceptor } from './logging.interceptor';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import path from 'path';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -16,7 +15,7 @@ async function bootstrap() {
         transport: Transport.GRPC,
         options: {
             package: 'goto.v1',
-            protoPath: path.join(__dirname, 'proto/price.proto'),
+            protoPath: require.resolve('@goto/proto/proto/price.proto'),
             url: '0.0.0.0:5200',
         },
     });
